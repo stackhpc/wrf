@@ -4,13 +4,14 @@
 # Assumes no root access.
 # Each section is set up so it can be rerun stand-alone, but the order of sections is important.
 
-
 # will install into this OpenHPC-style tree:
 export INSTALL_ROOT=$HOME/gnu-7.3.0/openmpi-3.1.0/
 mkdir -p $INSTALL_ROOT
-mkdir $HOME/src # will use for builds which can't be done in the install tree
 
-# spack install `time`:
+# will use for builds which can't be done in the install tree:
+mkdir $HOME/src 
+
+# use spack to install `time`:
 spack install time
 
 # install zlib:
@@ -24,7 +25,7 @@ make check
 make install
 
 # parallel-netcdf:
-cd src
+cd $HOME/src
 wget https://parallel-netcdf.github.io/Release/pnetcdf-1.12.0.tar.gz
 tar -xf pnetcdf-1.12.0.tar.gz
 cd pnetcdf-1.12.0
@@ -34,7 +35,7 @@ make check
 make install
 
 # netcdf-c:
-# NB this is actually required even when using parallel-netcdf, despite some posts that you don't
+# NB: This is actually required even when using parallel-netcdf, despite some posts saying it's not
 # NB: Needs build options parallel (non-default) and shared libs (default)
 # NB: Can't be built in its install directory
 cd $HOME/src
@@ -66,7 +67,7 @@ make install
 
 # WRF:
 cd $INSTALL_ROOT
-wget --no-check-certificate https://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz # cert expired
+wget --no-check-certificate https://www2.mmm.ucar.edu/wrf/src/WRFV3.8.1.TAR.gz # cert has expired
 tar -xf WRFV3.8.1.TAR.gz
 mv WRFV3 WRFV3.8.1
 cd WRFV3.8.1
@@ -82,4 +83,4 @@ spack load time
 dm_cc_line='DM_CC           =       mpicc -DMPI2_SUPPORT'
 sed -i "s/^DM_CC\s*=.*/${dm_cc_line}/" configure.wrf
 ./compile em_real 2>&1 | tee real1.log
-# RUNNING ...
+# FAILS ...
